@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, createPortal } from "react";
 import Tours from "./Tours";
 import Loading from "./Loading";
+import ReservedTours from "./ReservedTours";
 import logo from "./logo.svg";
 import "./App.css";
 
@@ -9,6 +10,7 @@ const url = "https://course-api.com/react-tours-project";
 
 function App() {
   const [loading, setLoading] = useState(true);
+  const [viewReserved, setViewReserved] = useState(false);
   const [tours, setTours] = useState([]);
   const [myTours, setMyTours] = useState([]);
 
@@ -20,6 +22,7 @@ function App() {
 
   const reserveTours = (id) => {
     const reserve = tours.filter((tour) => tour.id === id);
+
     setMyTours((prev) => [...prev, reserve]);
   };
 
@@ -29,7 +32,6 @@ function App() {
       const response = await fetch(url);
       const tours = await response.json();
       setTours(tours);
-      console.log(tours);
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -58,7 +60,7 @@ function App() {
         <div className="no-tours-container">
           <button
             className="btn btn-reserved"
-            onClick={() => console.log(myTours)}
+            onClick={() => setViewReserved(!viewReserved)}
           >
             reserved tours
           </button>
@@ -74,10 +76,11 @@ function App() {
         <main className="tours-container">
           <button
             className="btn btn-reserved"
-            onClick={() => console.log(myTours)}
+            onClick={() => setViewReserved(!viewReserved)}
           >
             reserved tours
           </button>
+          <ReservedTours viewReserved={viewReserved} myTours={myTours} />
           <Tours
             tours={tours}
             removeTours={removeTours}
